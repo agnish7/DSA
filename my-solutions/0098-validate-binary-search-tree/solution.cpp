@@ -11,22 +11,23 @@
  */
 class Solution {
 public:
-    
-    bool inorder(TreeNode* root, TreeNode** prev) {
-        if(root == nullptr)
-            return true;
-        else {
-            bool left = inorder(root->left, prev);
-            if(*prev != nullptr)
-                if((*prev)->val >= root->val)
-                    return false;
-            *prev = root;
-            bool right = inorder(root->right, prev);
-            return left && right;
-        }
+
+    bool isValid(TreeNode* root, TreeNode*& prev) {
+        // check if the root is nullptr;
+        if(root == nullptr) return true;
+
+        if(!isValid(root->left, prev)) return false;
+
+        if(prev && prev->val >= root->val) return false;
+        prev =  root;
+
+        if(!isValid(root->right, prev)) return false;
+
+        return true;
     }
+
     bool isValidBST(TreeNode* root) {
         TreeNode* prev = nullptr;
-        return inorder(root, &prev);
+        return isValid(root, prev);
     }
 };
