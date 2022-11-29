@@ -10,63 +10,58 @@
  */
 class Solution {
 public:
-    void mergeLists(ListNode* x, ListNode* y) {
-        // x has to be the longer one.
-        ListNode* head = nullptr;
-        ListNode* ptr = head;
-        while(x && y) {
-            ListNode* temp = x;
-            if(x) {
-                x = x->next;
-            }
-            temp->next = y;
-            temp = y;
-            if(y) {
-                y = y->next;
-            }
-            temp->next = x;  
+    void* mergeLists(ListNode* node1, ListNode* node2) {
+        ListNode* head = node1;
+        while(node2) {
+            ListNode* temp1 = node1;
+            node1 = node1->next;
+            temp1->next = node2;
+            ListNode* temp2 = node2;
+            node2 = node2->next;
+            temp2->next = node1;
         }
+        return head;
     }
-
-    ListNode* reverseList(ListNode* list) {
-        if(!list)
+    ListNode* reverseList(ListNode* node) {
+        if(!node) {
             return nullptr;
-        else if(!list->next) {
-            return list;
-        } else {
-            ListNode* temp = reverseList(list->next);
-            list->next->next = list;
-            list->next = nullptr;
-            return temp;
         }
+        if(!node->next) {
+            return node;
+        }
+        ListNode* temp =  reverseList(node->next);
+        node->next->next = node;
+        node->next = nullptr;
+        return temp;
     }
-
     void reorderList(ListNode* head) {
-        ListNode* slow = head;
+        // find the mid point of the given list
         ListNode* fast = head;
-        ListNode* prev = nullptr;
-
-        while(fast) {
+        ListNode* slow = head;
+        ListNode* prev = slow;
+        while(fast && fast->next) {
             prev = slow;
-            slow = slow->next;
-            if(!fast->next)
-                break;
             fast = fast->next->next;
+            slow = slow->next;
         }
+        prev = slow;
+        slow = slow->next;
 
+        // detach the 2nd list from the original
+        ListNode* list1= head;
+        ListNode* list2= slow;
         prev->next = nullptr;
-        slow = reverseList(slow);
-        ListNode* temp = slow;
-        while(temp){
-            cout << temp->val << " ";
-            temp = temp->next;
-        }
-        cout << endl;
 
-        mergeLists(head, slow);
+        // reverse the 2nd list
+        list2 = reverseList(list2);
 
-        if(prev)cout << "prev" << prev->val << endl;
-        if(slow)cout << "slow" << slow->val << endl;
-        if(fast)cout << "fast" << fast->val << endl;
+        // merge the reversed list with first half
+        mergeLists(list1, list2);
+
+        // ListNode* ptr = list2;
+        // while(ptr) {
+        //     cout << ptr->val;
+        //     ptr = ptr->next;
+        // }
     }
 };
