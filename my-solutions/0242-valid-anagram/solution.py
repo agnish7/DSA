@@ -1,24 +1,37 @@
-class Solution:
-    def isAnagram(self, s: str, t: str) -> bool:
-        if len(s) != len(t):
-            return False
-        hashmap = {}
+class Solution(object):
+    def isAnagram(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: bool
+        """
+
+        char_map = {}
+
         for i in range(len(s)):
-            if s[i] in hashmap.keys():
-                hashmap[s[i]] = hashmap[s[i]] + 1
+            if s[i] in char_map:
+                char_map[s[i]] += 1
             else:
-                hashmap[s[i]] = 1
-        
+                char_map[s[i]] = 1
+
+        print(char_map)
+
         for j in range(len(t)):
-            if t[j] in hashmap.keys():
-                hashmap[t[j]] = hashmap[t[j]] - 1
+            if t[j] in char_map:
+                char_map[t[j]] -=1
+                if(char_map[t[j]] < 0):
+                    # print('val less than zero')
+                    return False
             else:
+                # print('key not found')
                 return False
 
-        
-        for key in hashmap.keys():
-            if hashmap[key] != 0:
+        print(char_map)
+
+        for k in char_map:
+            if char_map[k] > 0:
+                # print('val greater than 0')
                 return False
 
         return True
-                    
+
