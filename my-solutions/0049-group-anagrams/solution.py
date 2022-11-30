@@ -1,23 +1,28 @@
-class Solution:
-    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
-        dict_map = {}
-        result = []
+class Solution(object):
+    def groupAnagrams(self, strs):
+        """
+        :type strs: List[str]
+        :rtype: List[List[str]]
+        """
+
+        def getKey(s):
+            return "".join(sorted(s))
+
+        res = []
+        str_map = {}
         for i in range(len(strs)):
-            key = self.getKey(strs[i])
-            if key not in dict_map:
-                dict_map[key] = [strs[i]]
+            key = getKey(strs[i])
+            if key in str_map:
+                str_map[key].append(strs[i])
             else:
-                dict_map[key].append(strs[i])
-                
-        for anagrams in dict_map.values():
-            result.append(anagrams)
+                str_map[key] = [strs[i]]
+
+        # print(str_map)
+
         
-        return result
-    
-    def getKey(self, s):
-        key = 0
-        s = list(s)
-        for i in range(len(s)):
-            key += 10 ** int(ord(s[i]) - ord('a'))
-        return key
-            
+        for key in str_map:
+            res.append(str_map[key])
+
+        return res
+
+
