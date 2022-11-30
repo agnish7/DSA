@@ -1,9 +1,17 @@
-class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        dict1 = {}
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+
+        nums_set = {}
+
         for i in range(len(nums)):
-            if nums[i] in dict1:
-                return [dict1[nums[i]], i]
+            if nums[i] in nums_set:
+                return [nums_set[nums[i]], i]
             else:
-                dict1[target - nums[i]] = i
-        return [0, 0]
+                nums_set[target - nums[i]] = i
+        
+        return [-1, -1]
