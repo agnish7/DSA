@@ -1,17 +1,23 @@
-class Solution:
-    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+class Solution(object):
+    def combinationSum(self, candidates, target):
+        """
+        :type candidates: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+
+        if target < min(candidates):
+            return []
+
         res = []
+        for i in range(len(candidates)):
+            if candidates[i] == target:
+                res.append([candidates[i]])
+            elif candidates[i] < target:
+                temp = self.combinationSum(candidates[i:], target - candidates[i])
+                for j in range(len(temp)):
+                    temp2 = [candidates[i]]
+                    temp2.extend(temp[j])
+                    res.append(temp2)
         
-        def dfs(idx, total, curr_array):
-            if total - target == 0:
-                res.append(curr_array.copy())
-            elif total - target > 0 or idx >= len(candidates):
-                return
-            else:
-                curr_array.append(candidates[idx])
-                dfs(idx, total + candidates[idx], curr_array)
-                curr_array.pop()
-                dfs(idx + 1, total, curr_array)
-            
-        dfs(0, 0, [])
         return res
