@@ -1,37 +1,22 @@
-class Solution(object):
-    def isAnagram(self, s, t):
-        """
-        :type s: str
-        :type t: str
-        :rtype: bool
-        """
-
-        char_map = {}
-
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        dict_s = {}
         for i in range(len(s)):
-            if s[i] in char_map:
-                char_map[s[i]] += 1
+            if s[i] in dict_s:
+                dict_s[s[i]] += 1
             else:
-                char_map[s[i]] = 1
+                dict_s[s[i]] = 1
 
-        print(char_map)
-
-        for j in range(len(t)):
-            if t[j] in char_map:
-                char_map[t[j]] -=1
-                if(char_map[t[j]] < 0):
-                    # print('val less than zero')
-                    return False
-            else:
-                # print('key not found')
+        for i in range(len(t)):
+            if t[i] not in dict_s:
                 return False
+            else:
+                dict_s[t[i]] -= 1
+                if dict_s[t[i]] < 0:
+                    return False
 
-        print(char_map)
-
-        for k in char_map:
-            if char_map[k] > 0:
-                # print('val greater than 0')
+        for key in dict_s:
+            if dict_s[key] != 0:
                 return False
 
         return True
-
