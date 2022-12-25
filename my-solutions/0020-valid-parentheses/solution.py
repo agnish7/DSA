@@ -1,35 +1,20 @@
-from queue import LifoQueue as stack
-
+from collections import deque
 class Solution:
     def isValid(self, s: str) -> bool:
-        stk = stack(maxsize=10000)
+        stac = deque()
         for i in range(len(s)):
-            if s[i] == '(' or s[i] == '{' or s[i] == '[':
-                stk.put(s[i])
-            elif s[i] == ')':
-                if stk.empty():
-                    return False
-                top = stk.get()
-                if top != '(':
-                    return False
-            elif s[i] == '}':
-                if stk.empty():
-                    return False
-                top = stk.get()
-                if top != '{':
-                    return False
-            elif s[i] == ']':
-                if stk.empty():
-                    return False
-                top = stk.get()
-                if top != '[':
-                    return False
+            if s[i] in ["(", "{", "["]:
+                stac.append(s[i])
             else:
-                return False
+                if len(stac) == 0:
+                    return False
+                top = stac.pop()
+                if top == "(" and s[i] != ")":
+                    return False
+                if top == "{" and s[i] != "}":
+                    return False
+                if top == "[" and s[i] != "]":
+                    return False
         
-        if stk.empty():
-            return True
-        else:
-            return False
-                
-                    
+        return len(stac) == 0
+
