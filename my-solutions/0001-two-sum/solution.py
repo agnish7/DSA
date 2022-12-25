@@ -1,7 +1,3 @@
-from collections import defaultdict
-
-
-
 class Solution(object):
     def twoSum(self, nums, target):
         """
@@ -9,13 +5,11 @@ class Solution(object):
         :type target: int
         :rtype: List[int]
         """
-        def dictRetVal():
-            return None
-        num_dict = defaultdict(dictRetVal)
+        num_cache = {}
         for i in range(len(nums)):
-            if num_dict[nums[i]] != None:
-                return [i, num_dict[nums[i]]]
+            if nums[i] in num_cache:
+                return [num_cache[nums[i]], i]
             else:
-                num_dict[target - nums[i]] = i
-        return [0, 0]
+                num_cache[target - nums[i]] = i
         
+        return [-1, -1]
