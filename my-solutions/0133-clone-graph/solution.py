@@ -8,23 +8,21 @@ class Node:
 
 class Solution:
     def cloneGraph(self, node: 'Node') -> 'Node':
-        visited = {}
+        node_map = {}
 
-        if not node:
-            return None
-        def dfs(node):
-            if node in visited:
-                return visited[node]
+        def clone(node):
+            if node in node_map:
+                return node_map[node]
             else:
-                # create copy
-                cpy = Node(node.val)
+                # clone the node
+                curr = Node(node.val)
 
-                # add to visited
-                visited[node] = cpy
+                # add curr to the map
+                node_map[node] = curr
+
                 for i in range(len(node.neighbors)):
-                    cpy.neighbors.append(dfs(node.neighbors[i]))
-            
-                return cpy
+                    curr.neighbors.append(clone(node.neighbors[i]))
+                
+                return curr
 
-        return dfs(node)
-
+        return clone(node) if node else None
