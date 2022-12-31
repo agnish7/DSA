@@ -1,15 +1,9 @@
-class Solution(object):
-    def __init__(self):
-        self.cache = {}
-    def rob(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: int
-        """
-        if len(nums) == 0:
-            return 0
-        if len(nums) in self.cache:
-            return self.cache[len(nums)]
-        else:
-            self.cache[len(nums)] = max(nums[0] + self.rob(nums[2:]), self.rob(nums[1:]))
-            return self.cache[len(nums)]
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        dp = [0 for i in range(len(nums) + 1)]
+        dp[len(nums)] = 0
+        dp[len(nums) - 1] = nums[len(nums) - 1]
+
+        for i in range(len(nums) - 2, -1, -1):
+            dp[i] = max(nums[i] + dp[i+2], dp[i+1])
+        return dp[0]
