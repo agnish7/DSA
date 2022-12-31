@@ -1,10 +1,13 @@
 class Solution:
     def climbStairs(self, n: int) -> int:
-        fib1 = 0
-        fib2 = 1
-        for i in range(n):
-            fib3 = fib1 + fib2
-            fib1 = fib2
-            fib2 = fib3
-            
-        return fib3
+        if n == 0 or n == 1:
+            return 1
+        else:
+            n0 = 1
+            n1 = 1
+            n2 = -1
+            for i in range(2, n+1):
+                n2 = n1 + n0
+                n0 = n1
+                n1 = n2
+            return n2
