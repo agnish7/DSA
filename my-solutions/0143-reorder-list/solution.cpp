@@ -10,58 +10,46 @@
  */
 class Solution {
 public:
-    void* mergeLists(ListNode* node1, ListNode* node2) {
-        ListNode* head = node1;
-        while(node2) {
-            ListNode* temp1 = node1;
-            node1 = node1->next;
-            temp1->next = node2;
-            ListNode* temp2 = node2;
-            node2 = node2->next;
-            temp2->next = node1;
-        }
-        return head;
-    }
-    ListNode* reverseList(ListNode* node) {
-        if(!node) {
+    ListNode* reverseList(ListNode* head) {
+        if(!head)
             return nullptr;
+        else if(!head->next)
+            return head;
+        else {
+            ListNode* newList = reverseList(head->next);
+            head->next->next = head;
+            head->next = nullptr;
+            return newList;
         }
-        if(!node->next) {
-            return node;
-        }
-        ListNode* temp =  reverseList(node->next);
-        node->next->next = node;
-        node->next = nullptr;
-        return temp;
     }
+
     void reorderList(ListNode* head) {
-        // find the mid point of the given list
-        ListNode* fast = head;
+        if(!head) return;
+        else if(!head->next) return;
+
+        // split the LL into 2
         ListNode* slow = head;
-        ListNode* prev = slow;
+        ListNode* fast = head;
+
         while(fast && fast->next) {
-            prev = slow;
-            fast = fast->next->next;
             slow = slow->next;
+            fast = fast->next->next;
         }
-        prev = slow;
-        slow = slow->next;
 
-        // detach the 2nd list from the original
-        ListNode* list1= head;
-        ListNode* list2= slow;
-        prev->next = nullptr;
+        ListNode* list1 = head;
+        ListNode* list2 = slow->next;
 
-        // reverse the 2nd list
+        slow->next = nullptr;
+
         list2 = reverseList(list2);
 
-        // merge the reversed list with first half
-        mergeLists(list1, list2);
-
-        // ListNode* ptr = list2;
-        // while(ptr) {
-        //     cout << ptr->val;
-        //     ptr = ptr->next;
-        // }
+        while(list1 && list2) {
+            ListNode* temp = list1;
+            list1 = list1->next;
+            temp->next = list2;
+            temp = list2;
+            list2 = list2->next;
+            temp->next = list1;
+        }
     }
 };
