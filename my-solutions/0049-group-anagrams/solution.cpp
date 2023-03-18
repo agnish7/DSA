@@ -1,42 +1,29 @@
 class Solution {
 public:
     string getKey(string s) {
-        vector<int> count(26);
-        for(int i = 0; i < s.length(); i++){
-            count[s[i] - 'a']++;
+        string key = "000000000000000000000000000";
+        for(int i = 0; i < s.length(); i++) {
+            key[int(s[i] - 'a')]++;
         }
-        // for(auto &i: count) {
-        //     cout << i << " ";
-        // }
-        string key = string("");
-        for(int i = 0; i < 26; i++) {
-            key.append(to_string(count[i] + 'a'));
-        }
-        // cout << "\n" << key << " ";
         return key;
     }
     vector<vector<string>> groupAnagrams(vector<string>& strs) {
-        unordered_map<string, vector<int>> string_map;
-        vector<vector<string>> result;
+        unordered_map<string, vector<string>> string_map;
         for(int i = 0; i < size(strs); i++) {
             string key = getKey(strs[i]);
             if(string_map.find(key) == string_map.end()) {
-                string_map.insert(pair<string, vector<int>>(key, vector<int>{i}));
-                // cout << key << " " << i << endl;
+                vector<string> v;
+                v.push_back(strs[i]);
+                string_map[key] = v;
             } else {
-                string_map[key].push_back(i);
-                // cout << key << " " << i << endl;
+                string_map[key].push_back(strs[i]);
             }
         }
-        for(auto &i: string_map) {
-            vector<string> vs;
-            for(auto &j : i.second) {
-                cout << j << " ";
-                vs.push_back(strs[j]);
-            }
-            cout << endl;
-            result.push_back(vs);
+
+        vector<vector<string>> res;
+        for(const auto& kv_pair: string_map) {
+            res.push_back(kv_pair.second);
         }
-        return result;
+        return res;
     }
 };
