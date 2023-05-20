@@ -1,14 +1,21 @@
 from collections import deque
+
 class Solution:
     def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
         stack = deque()
         stack.append([temperatures[0], 0])
-        output = [0] * len(temperatures)
+        res = [0] * len(temperatures)
 
-        for i in range(1, len(temperatures)):
-            while stack and temperatures[i] > stack[-1][0]:
-                top = stack.pop()
-                output[top[1]] = i - top[1]
-            stack.append([temperatures[i], i])
-        
-        return output
+        TEMP = 0
+        IDX = 1
+
+        for i, e in enumerate(temperatures):
+            while len(stack) > 0 and e > stack[-1][TEMP]:
+                res[stack[-1][IDX]] = i - stack[-1][IDX]
+                stack.pop()
+            else:
+                stack.append([e, i])
+
+        return res
+
+
