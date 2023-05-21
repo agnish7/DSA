@@ -1,26 +1,31 @@
 class Solution:
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
-        freq = [[] for i in range(100000)]
-        count = {}
-        for i in range(len(nums)):
-            if nums[i] in count:
-                freq[count[nums[i]]].remove(nums[i])
-                freq[count[nums[i]] + 1].append(nums[i])
-                count[nums[i]] += 1
-            else:
-                freq[1].append(nums[i])
-                count[nums[i]] = 1
-        
+        # k most frequent elements
+        num_dict = {}
         res = []
-        i = len(freq)
-        while(k > 0):
-            i -= 1
-            if len(freq[i]) != 0:
-                for j in range(len(freq[i])):
-                    res.append(freq[i][j])
-                    k -= 1
-                    if k == 0:
-                        break
+        for i in nums:
+            if i in num_dict:
+                num_dict[i] += 1
+            else:
+                num_dict[i] = 1
+        
+        # create a reverse dict with the frequencies as the keys and the elements as the values
+        rev_dict = {}
+        for key, value in num_dict.items():
+            if value in rev_dict:
+                rev_dict[value].append(key)
+            else:
+                rev_dict[value] = [key]
+        
+        # go through the dictionary and prepare the output
+        freqs = sorted(rev_dict.keys(), reverse = True)
 
-        return res
+        for freq in freqs:
+            for elem in rev_dict[freq]:
+                res.append(elem)
+                k -= 1
+                if k <= 0:
+                    return res
+
+        return res            
 
