@@ -1,15 +1,11 @@
-class Solution(object):
-    def twoSum(self, nums, target):
-        """
-        :type nums: List[int]
-        :type target: int
-        :rtype: List[int]
-        """
-        num_cache = {}
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        diff_idx = {}
+
         for i in range(len(nums)):
-            if nums[i] in num_cache:
-                return [num_cache[nums[i]], i]
+            if nums[i] in diff_idx:
+                return [i, diff_idx[nums[i]]]
             else:
-                num_cache[target - nums[i]] = i
-        
+                diff_idx[target - nums[i]] = i
         return [-1, -1]
+
