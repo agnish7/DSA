@@ -1,11 +1,9 @@
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
-        diff_idx = {}
-
+        num_map = {}
         for i in range(len(nums)):
-            if nums[i] in diff_idx:
-                return [i, diff_idx[nums[i]]]
+            if nums[i] in num_map:
+                return [i, num_map[nums[i]]]
             else:
-                diff_idx[target - nums[i]] = i
-        return [-1, -1]
-
+                num_map[target - nums[i]] = i
+        return [0, 0]
