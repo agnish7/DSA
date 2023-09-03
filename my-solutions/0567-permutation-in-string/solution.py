@@ -1,44 +1,34 @@
 class Solution:
     def checkInclusion(self, s1: str, s2: str) -> bool:
-        if len(s2) < len(s1):
-            return False
-        dicts1 = {}
-        dicts2 = {}
+        s1_chars = [0] * 26
+        s2_chars = [0] * 26
+        l = 0
 
-        for i in range(len(s1)):
-            if s1[i] not in dicts1:
-                dicts1[s1[i]] = 1
-            else:
-                dicts1[s1[i]] += 1
+        for c in s1:
+            s1_chars[ord(c) - ord('a')] += 1
 
-        # print(dicts1)
-        
-        sizes1 = len(s1)
+        def check_subset(s1_chars, s2_chars):
+            res = True
+            for i in range(len(s1_chars)):
+                res = res and (s1_chars[i] <= s2_chars[i])
+            return res
 
-        for i in range(sizes1):
-            if s2[i] not in dicts2:
-                dicts2[s2[i]] = 1
-            else:
-                dicts2[s2[i]] += 1
-        
-        # print(dicts2)
-        
-        for i in range(sizes1, len(s2)):
-            if dicts2 == dicts1:
+        for r in range(len(s2)):
+
+            s2_chars[ord(s2[r]) - ord('a')] += 1
+            if(check_subset(s1_chars, s2_chars)):
+                # print(l, r, check_subset(s1_chars, s2_chars))
+                while(l <= r and check_subset(s1_chars, s2_chars)):
+                    s2_chars[ord(s2[l]) - ord('a')] -= 1
+                    l += 1
+                # print(l, r, s1_chars, s2_chars)
+                l -= 1
+                s2_chars[ord(s2[l]) - ord('a')] += 1
+                # print(l, r, s1_chars, s2_chars)
+            
+            if s1_chars == s2_chars:
                 return True
-            
-            if s2[i] not in dicts2:
-                dicts2[s2[i]] = 1
-            else:
-                dicts2[s2[i]] += 1
-            
-            if dicts2[s2[i - sizes1]] == 1:
-                del dicts2[s2[i - sizes1]]
-            else:
-                dicts2[s2[i - sizes1]] -= 1
-        
-        if dicts1 == dicts2:
-            return True
         
         return False
+
 
