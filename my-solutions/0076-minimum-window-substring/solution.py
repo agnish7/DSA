@@ -1,27 +1,30 @@
 class Solution:
     def minWindow(self, s: str, t: str) -> str:
-        countT, window = {}, {}
+        if len(t) > len(s):
+            return ""
+        sCount, tCount = defaultdict(int), defaultdict(int)
         for c in t:
-            countT[c] = 1 + countT.get(c, 0)
-
-        have, need = 0, len(countT)
-        j = 0
-        res, reslen = "", float("inf")
-        for i in range(len(s)):
-            window[s[i]] = 1 + window.get(s[i], 0)
-            if s[i] in countT and countT[s[i]] == window[s[i]]:
-                have += 1
+            tCount[c] += 1
         
-            
-            while have == need:
-                # print(window)
-                if i - j + 1 < reslen:
-                    res = s[j : i+1]
-                    # print(res)
-                    reslen = i - j + 1
-                window[s[j]] -= 1
-                if s[j] in countT and countT[s[j]] > window[s[j]]:
-                    have -= 1
-                j += 1
-
-        return res
+        l, l_min, r_min, min_window = 0, 0, 0, float('inf')
+        def checkSubString(sCount, tCount):
+            res = True
+            for key in tCount:
+                res = res and tCount[key] <= sCount[key]
+            return res
+        
+        for r in range(len(s)):
+            sCount[s[r]] += 1
+            # print(s[l:r+1], sCount, tCount, checkSubString(sCount, tCount))
+            if checkSubString(sCount, tCount):
+                while(checkSubString(sCount, tCount)):
+                    # print(s[l:r+1], sCount, tCount, checkSubString(sCount, tCount))
+                    sCount[s[l]] -= 1
+                    l += 1
+                l -= 1
+                sCount[s[l]] += 1
+                if r - l < min_window:
+                    min_window = r - l
+                    r_min = r
+                    l_min = l
+        return s[l_min:r_min+1] if min_window < float('inf') else ""
