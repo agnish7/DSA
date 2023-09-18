@@ -1,20 +1,17 @@
-from collections import deque
 class Solution:
     def isValid(self, s: str) -> bool:
-        stac = deque()
-        for i in range(len(s)):
-            if s[i] in ["(", "{", "["]:
-                stac.append(s[i])
-            else:
-                if len(stac) == 0:
-                    return False
-                top = stac.pop()
-                if top == "(" and s[i] != ")":
-                    return False
-                if top == "{" and s[i] != "}":
-                    return False
-                if top == "[" and s[i] != "]":
-                    return False
-        
-        return len(stac) == 0
 
+        bracketStack = deque()
+        for c in s:
+            if len(bracketStack) == 0 and c in [')', '}', ']']:
+                return False
+            if len(bracketStack) > 0 and c in [')', '}', ']']:
+                top = bracketStack[-1]
+                if top == '(' and c != ')' or top == '{' and c != '}' or top == '[' and c != ']':
+                    return False
+                else:
+                    bracketStack.pop()
+            else:
+                bracketStack.append(c)
+        
+        return len(bracketStack) == 0
