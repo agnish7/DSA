@@ -1,24 +1,17 @@
-from collections import deque
-
 class Solution:
     def generateParenthesis(self, n: int) -> List[str]:
         stack = deque()
-        output = []
-        def gen(openN, closeN):
-            if openN == closeN == n:
-                output.append("".join(stack))
-                return
-            if openN < n:
+        res = []
+        def backTrack(open, close):
+            if open == n and close == open:
+                res.append("".join(stack))
+            if open < n:
                 stack.append('(')
-                gen(openN + 1, closeN)
+                backTrack(open + 1, close)
                 stack.pop()
-            if openN > closeN:
+            if close < open:
                 stack.append(')')
-                gen(openN, closeN + 1)
+                backTrack(open, close + 1)
                 stack.pop()
-
-        gen(0, 0)
-
-        return output
-
-
+        backTrack(0, 0)
+        return res
