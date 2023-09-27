@@ -1,42 +1,29 @@
 class Solution:
     def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
-        if len(matrix) <= 0:
-            return False
-        if target < matrix[0][0]:
-            return False
-        if target > matrix[len(matrix) - 1][len(matrix[0]) - 1]:
-            return False
 
-        def binSearch(array, num):
-            if len(array) <= 0:
-                return -1
-            mid = len(array) // 2
-            if num == array[mid]:
-                return mid
-            elif num < array[mid]:
-                res = binSearch(array[:mid], num)
-                return res
+        def binSearch(row):
+            l, r = 0, len(matrix[0]) - 1
+            # print(matrix[row])
+            while(l <= r):
+                mid = int((l+r)/2)
+                if matrix[row][mid] == target:
+                    return mid
+                elif matrix[row][mid] > target:
+                    r = mid - 1
+                else:
+                    l = mid + 1
+            return -1
+
+        l, r = 0, len(matrix) - 1
+        while(l <= r):
+            mid = int((l + r) / 2)
+            # print(l, mid, r)
+            if target <= matrix[mid][-1] and target >= matrix[mid][0]:
+                return binSearch(mid) != -1
+            elif target > matrix[mid][-1]:
+                l = mid + 1
             else:
-                res = binSearch(array[mid+1:], num)
-                return mid + 1 + res if res != -1 else -1
+                r = mid - 1
         
-        def bSearchMin(array, num):
-            # print(array)
-            if len(array) <= 1:
-                return -1
-            mid = len(array) // 2
-            if num in range(array[mid - 1], array[mid]):
-                return mid
-            elif num < array[mid -1]:
-                return bSearchMin(array[:mid], num)
-            else:
-                res = bSearchMin(array[mid:], num)
-                return mid + res if res != -1 else -1
-
-        if len(matrix) == 1:
-            return binSearch(matrix[:][0], target) != -1 or binSearch(matrix[:][0], target) != -1
-
-        firstcol = [row[0] for row in matrix]
-        row = bSearchMin(firstcol, target)
-
-        return binSearch(matrix[:][row -1], target) != -1 or binSearch(matrix[:][row], target) != -1
+        return False
+        
