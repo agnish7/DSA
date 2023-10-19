@@ -5,47 +5,27 @@
 #         self.next = next
 class Solution:
     def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
-        if(list1 == None and list2 == None):
-            return None
-        elif list1 == None:
+        prev1, prev2  = None, None
+        if not list1:
             return list2
-        elif list2 == None:
+        if not list2:
             return list1
-        else:
-            head = ListNode()
-            curr = head
-            
-            if(list1.val <= list2.val):
-                curr.val = list1.val
-                list1 = list1.next
-            else:
-                curr.val = list2.val
-                list2 = list2.next
-                
-            while list1 and list2:
-                newNode = ListNode()
-                curr.next = newNode
-                curr = newNode
-                
-                if(list1.val <= list2.val):
-                    curr.val = list1.val
+        head = list1 if list1.val <= list2.val else list2
+        while(list1 and list2):
+
+            if(list1 and list2 and list1.val <= list2.val):
+                while(list1 and list1.val <= list2.val):
+                    prev1 = list1
                     list1 = list1.next
-                else:
-                    curr.val = list2.val
+                prev1.next = list2
+
+            if(list2 and list1 and list2.val <= list1.val):
+                while(list2 and list2.val <= list1.val):
+                    prev2 = list2
                     list2 = list2.next
+                prev2.next = list1
 
-            while list1:
-                newNode = ListNode()
-                curr.next = newNode
-                curr = newNode            
-                curr.val = list1.val
-                list1 = list1.next
+        
+        prev1, prev2, list1, list2 = None, None, None, None
+        return head
 
-            while list2:
-                newNode = ListNode()
-                curr.next = newNode
-                curr = newNode            
-                curr.val = list2.val
-                list2 = list2.next
-                
-            return head
