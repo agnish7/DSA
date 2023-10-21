@@ -9,22 +9,42 @@ class Node:
 
 class Solution:
     def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
-        copy_map = {}
-        ptr = head
-        while(ptr):
-            if ptr not in copy_map:
-                newNode = Node(ptr.val)
-                copy_map[ptr] = newNode
-            ptr = ptr.next
-    
-        copy_map[None] = None
+        # without hashmap
+        if not head:
+            return None
+
+        dummyAdder = head
+        while(dummyAdder.next):
+            temp = dummyAdder.next
+            dummyAdder.next = Node(dummyAdder.val)
+            dummyAdder.next.next = temp
+            dummyAdder = dummyAdder.next.next
+
+        dummyAdder.next = Node(dummyAdder.val)
+
+        # temp = head
+        # while(temp):
+        #     print(temp, temp.val)
+        #     temp = temp.next
+        # return head
         
-        newHead = copy_map[head]
-        ptr = head
-        while(ptr):
-            copy_map[ptr].next =  copy_map[ptr.next]
-            copy_map[ptr].random = copy_map[ptr.random]
-            ptr = ptr.next
+        randomAdder = head
+        while(randomAdder and randomAdder.next):
+            temp = randomAdder.next.next
+            if randomAdder.random:
+                randomAdder.next.random = randomAdder.random.next
+            randomAdder = temp
+
+        splitter = head
+        res = head.next
+        while(splitter.next.next):
+            temp = splitter.next.next
+            splitter1 = splitter
+            splitter2 = splitter.next
+            splitter1.next = splitter1.next.next
+            splitter2.next = splitter2.next.next
+            splitter = temp
         
-        return newHead
+        return res
+
 
