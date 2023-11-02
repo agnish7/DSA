@@ -1,141 +1,56 @@
 class Node:
-  def __init__(self, key, val, front = None, back = None):
-    self.key, self.val, self.front, self.back = key, val, front, back
-  def getKey(self):
-    return self.key
-  def getFront(self):
-    return self.front
-  def getBack(self):
-    return self.back
-  def getVal(self):
-    return self.val
-  def setFront(self, node):
-    self.front = node
-  def setBack(self, node):
-    self.back = node
-  def setVal(self, val):
-    self.val = val
-
-class DLL:
-  def __init__(self):
-    self.start = None
-    self.end = None
-  
-  def addNode(self, key, val): # adds a node to the front of the list
-    if self.start:
-      newNode = Node(key, val, None, self.start)
-      self.start.setFront(newNode)
-      self.start = newNode
-    else:
-      self.start = Node(key, val)
-      self.end = self.start
-  
-  def moveToStart(self, node): # move a node to the front of the list
-    def setNodeFront(node):
-      self.start.setFront(node)
-      node.setBack(self.start)
-      self.start = node
-      self.start.front = None
-    if self.end == None or self.start == self.end or node == self.start:
-      return
-    if self.start.getBack().getBack() == None: # only 2 nodes
-      self.start.front, self.end.back = self.end, self.start
-      self.start.back, self.end.front = None, None
-      self.start, self.end = self.end, self.start
-    elif node == self.end: # end node
-      prev = node.getFront()
-      prev.setBack(None)
-      self.end = prev
-      setNodeFront(node)
-    else: # middle node
-      prev, nxt = node.getFront(), node.getBack()
-      prev.setBack(nxt)
-      nxt.setFront(prev)
-      setNodeFront(node)
-  
-  def popBack(self):
-    key = float("-inf")
-    if self.start == self.end:
-      key = self.start.getKey()
-      self.start, self.end = None, None
-    else:
-      key = self.end.getKey()
-      prev = self.end.getFront()
-      prev.setBack(None)
-      self.end = prev
-    return key
-  
-  def getStart(self):
-    return self.start
-  
-  def getEnd(self):
-    return self.end
-
-  # debugging
-  def printAll(self):
-    ptr = self.start
-    while(ptr):
-      print([ptr.front.key, ptr.front.val] if ptr.front else "None", [ptr.key, ptr.val], [ptr.back.key, ptr.back.val] if ptr.back else "None", end = ", ")
-      ptr = ptr.back
-    print("")
-  
+    def __init__(self, key, val):
+        self.key, self.val = key, val
+        self.left = self.right = None
 
 class LRUCache:
 
     def __init__(self, capacity: int):
-      self.cacheList = DLL()
-      self.cache = {}
-      self.cap = capacity
-      self.numNodes = 0
+        self.right, self.left = Node(0, 0), Node(0, 0)
+        self.right.next, self.left.prev = None, None
+        self.right.prev, self.left.next = self.left, self.right
+        self.cap = capacity
+        self.cache = {}
+    
+    def remove(self, node):
+        prev, nxt = node.prev, node.next
+        prev.next, nxt.prev = nxt, prev
 
-    def printCache(self):
-      for key, val in self.cache.items():
-        print(key, val.getVal())
-      print("")
+    def insert(self, node): # insert at right
+        prev, nxt = self.right.prev, self.right
+        prev.next = nxt.prev = node
+        node.prev, node.next = prev, nxt
 
     def get(self, key: int) -> int:
-      # print("get", key, ": ")
-      if key not in self.cache:
-        #
-        # self.cacheList.printAll()
-        # self.printCache()
-        return -1
-      else:
-        node = self.cache[key]
-        res = node.getVal()
-        self.cacheList.moveToStart(node)
-        # 
-        # self.cacheList.printAll()
-        # self.printCache()
-        return res
-
-    def put(self, key: int, value: int) -> None:
-      # print("put", key, value, ": ")
-      if key in self.cache:
-        node = self.cache[key]
-        node.setVal(value)
-        self.cacheList.moveToStart(node)
-        # 
-        # self.cacheList.printAll()
-        # self.printCache()
-      else:
-        if self.numNodes == self.cap: # capacity reached
-          delKey = self.cacheList.popBack()
-          # print("key for deletion = ", delKey)
-          if key != float("-inf"):
-            del self.cache[delKey]
-          self.cacheList.addNode(key, value)
-          self.cache[key] = self.cacheList.getStart()
-          #
-          # self.cacheList.printAll()
-          # self.printCache()
+        if key in self.cache:
+            self.remove(self.cache[key])
+            self.insert(self.cache[key])
+            return self.cache[key].val
         else:
-          self.cacheList.addNode(key, value)
-          self.cache[key] = self.cacheList.getStart()
-          self.numNodes += 1
-          #
-          # self.cacheList.printAll()
-          # self.printCache()
+            return -1
+        
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            self.cache[key].val = value
+            self.remove(self.cache[key])
+            self.insert(self.cache[key])
+        else:
+            if len(self.cache) == self.cap:
+                lru = self.left.next
+                self.remove(lru)
+                del self.cache[lru.key]
+
+                
+
+            node = Node(key, value)
+            self.cache[key] = node
+            self.insert(node)
+            
+            # temp = self.left
+            # while(temp):
+            #     print(temp.key, temp.val)
+            #     temp = temp.next
+            # print("")
         
 
 
