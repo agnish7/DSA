@@ -1,109 +1,70 @@
 # Definition for singly-linked list.
-# class ListNode(object):
+# class ListNode:
 #     def __init__(self, val=0, next=None):
 #         self.val = val
 #         self.next = next
-class Solution(object):
+class Solution:
     def merge(self, list1, list2):
-        if not list1 and not list2:
-            return None
-        # return copy of list 2 if list 1 empty
-        elif not list1:
-            head = ListNode(list2.val)
-            list2 = list2.next
-            temp = head
-            while(list2):
-                temp.next = ListNode(list2.val)
-                temp = temp.next
-                list2 = list2.next
-            temp.next = None
-            return head
-        # return copy of list 1 if list 2 is empty
-        elif not list2:
-            head = list1
-            list1 = list1.next
-            temp = head
-            while(list1):
-                temp.next = ListNode(list1.val)
-                temp = temp.next
-                list1 = list1.next
-            temp.next = None
-            return head
-        else:
-        # merge
-            res = None
-            if list1.val < list2.val:
-                res = ListNode(list1.val)
+        head = ListNode(0)
+        curr = head
+
+        while(list1 and list2):
+            if list1.val <= list2.val:
+                curr.next = list1
                 list1 = list1.next
             else:
-                res = ListNode(list2.val)
+                curr.next = list2
                 list2 = list2.next
-            
-            temp = res
-            while(list1 and list2):
-                if(list1.val < list2.val):
-                    temp.next = ListNode(list1.val)
-                    list1 = list1.next
-                    temp = temp.next
-                else:
-                    temp.next = ListNode(list2.val)
-                    list2 = list2.next
-                    temp = temp.next
-            
-            while(list1):
-                temp.next = ListNode(list1.val)
-                temp = temp.next
-                list1 = list1.next
-            
-            while(list2):
-                temp.next = ListNode(list2.val)
-                temp = temp.next
-                list2 = list2.next
+            curr = curr.next
 
-            temp.next = None
-            return res
+        if list1:
+            curr.next = list1
+        if list2:
+            curr.next = list2
 
-    def mergeKLists(self, lists):
-        """
-        :type lists: List[ListNode]
-        :rtype: ListNode
-        """
-        if(len(lists) == 0):
+        return head.next
+    
+    def printList(self, list):
+        while(list):
+            if list.next == None:
+                print(list.val, end = "")
+            else:
+                print(list.val, "->", end = "")
+            list = list.next
+
+        print("")
+    
+    def printAll(self, lists):
+        for list in lists:
+            self.printList(list)
+        print("")
+
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        def mergeLists(lists):
+            if len(lists) <= 1:
+                return lists
+            size = len(lists)
+            for i in range(size // 2):
+                idx = 2 * i
+                lists[i] = self.merge(lists[idx], lists[idx + 1])
+
+            # self.printAll(lists)
+
+            if size % 2 == 0:
+                lists = lists[:size // 2]
+            else:
+                last = lists[-1]
+                lists = lists[:size // 2]
+                lists.append(last)
+
+            # self.printAll(lists)
+    
+            return mergeLists(lists)
+        
+        res = mergeLists(lists)
+        if res:
+            return res[0]
+        else:
             return None
-
-        
-        while(len(lists) > 1):
-            mergedLists = []
-            for i in range(0, len(lists), 2):
-                l1 = lists[i]
-                l2 = lists[i+1] if i + 1 < len(lists) else None
-                ll = self.merge(l1, l2)
-                mergedLists.append(ll)
-            lists = mergedLists
-        
-        return lists[0]
-
-
-        # l1 = ListNode(6)
-        # h1 = l1
-        # l1.next = ListNode(8)
-        # l1 = l1.next
-        # l1.next = ListNode(9)
-        # l1 = l1.next
-        # l1.next = ListNode(80)
-        # l1 = l1.next
-        # l1.next = None
-
-        # l2 = ListNode(5)
-        # h2 = l2
-        # l2.next = ListNode(7)
-        # l2 = l2.next
-        # l2.next = ListNode(8)
-        # l2 = l2.next
-        # l2.next = None
-
-        # printL(self.merge(h1, h2))
-
-
 
 
