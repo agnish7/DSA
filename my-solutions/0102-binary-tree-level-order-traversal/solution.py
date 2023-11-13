@@ -5,20 +5,22 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def traverseTree(self, root, level, level_map):
-        if root == None:
-            return level_map
-        if level in level_map.keys():
-            level_map[level].append(root.val)
-        else:
-            level_map[level] = [root.val]
-        self.traverseTree(root.left, level + 1, level_map)
-        self.traverseTree(root.right, level + 1, level_map)
-        return level_map
-        
     def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
-        # traversal
-        level_map = self.traverseTree(root, 1, {})
-        return list(level_map.values())
+        q = deque()
+        res = []
+
+        if root:
+            q.append(root)
         
-        
+        while(q):
+            level = []
+            for i in range(len(q)):
+                node = q.popleft()
+                level.append(node.val)
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+            res.append(level)
+
+        return res
