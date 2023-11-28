@@ -1,48 +1,42 @@
-class Trie(object):
-    class Node:
-        def __init__(self):
-            self.next = [None for i in range(26)]
-            self.isWord = False
+class Node:
+    def __init__(self, end = 'False'):
+        self.end = end
+        self.next = [None] * 26
+
+
+
+class Trie:
 
     def __init__(self):
-        self.root = self.Node()
-
-    def getNode(self, word):
-        curr = self.root
-        for i in range(len(word)):
-            if curr.next[ord(word[i]) - ord('a')] == None:
-                return None
-            else:
-                curr = curr.next[ord(word[i]) - ord('a')]
-        return curr
-
-    def insert(self, word):
-        """
-        :type word: str
-        :rtype: None
-        """
-        curr = self.root
-        for i in range(len(word)):
-            if curr.next[ord(word[i]) - ord('a')] == None:
-                curr.next[ord(word[i]) - ord('a')] = self.Node()
-            curr = curr.next[ord(word[i]) - ord('a')]
-        curr.isWord = True
-
-    def search(self, word):
-        """
-        :type word: str
-        :rtype: bool
-        """
-
-        return self.getNode(word) != None and self.getNode(word).isWord
+        self.root = Node()
         
 
-    def startsWith(self, prefix):
-        """
-        :type prefix: str
-        :rtype: bool
-        """
-        return self.getNode(prefix) != None
+    def insert(self, word: str) -> None:
+        curr = self.root
+        for char in word:
+            if not curr.next[ord(char) - ord('a')]:
+                curr.next[ord(char) - ord('a')] = Node()
+            curr = curr.next[ord(char) - ord('a')]
+        curr.end = True
+        
+
+    def search(self, word: str) -> bool:
+        curr = self.root
+        for char in word:
+            if not curr.next[ord(char) - ord('a')]:
+                print("")
+                return False
+            curr = curr.next[ord(char) - ord('a')]        
+        return curr.end == True
+        
+
+    def startsWith(self, prefix: str) -> bool:
+        curr = self.root
+        for char in prefix:
+            if not curr.next[ord(char) - ord('a')]:
+                return False
+            curr = curr.next[ord(char) - ord('a')]
+        return True
         
 
 
