@@ -8,23 +8,27 @@ public:
             }
             if(s[i] == ')') {
                 ++close;
-            }
-            if(close > open) {
-                s[i] = '*';
-                open = 0;
-                close = 0;
+                if(close > open) {
+                    s[i] = '*';
+                    --close;
+                }
             }
         }
-        open = open - close;
+
         for(int i = s.size() - 1; i > -1; --i) {
-            if(open <= 0)
-                break;
-            if(s[i] == '(') {
+            if(s[i] == '(' && open > close) {
                 s[i] = '*';
                 --open;
             }
         }
-        s.erase(remove(s.begin(), s.end(), '*'), s.end());
-        return s;
+
+        string res;
+        for(auto& c: s) {
+            if(c != '*') {
+                res += c;
+            }
+        }
+
+        return res;
     }
 };
