@@ -9,14 +9,16 @@ public:
         for(auto& p: num_freq) {
             freq_num[p.second].push_back(p.first);
         }
+
         vector<int> res;
         for(auto& p: freq_num) {
-            for(auto& i: p.second) {
-                res.push_back(i);
-                if(res.size() == k)
+            for(auto& num: p.second) {
+                res.push_back(num);
+                if(res.size() == k) {
                     return res;
+                }
             }
         }
-        return {};
+        return res;
     }
 };
