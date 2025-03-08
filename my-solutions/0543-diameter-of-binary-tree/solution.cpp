@@ -12,19 +12,17 @@
 class Solution {
 public:
     int diameterOfBinaryTree(TreeNode* root) {
-        int diameter = 0;
-        height(root, diameter);
-        return diameter - 1;
+        int dia = INT_MIN;
+        dfs(root, dia);
+        return dia;
     }
-    int height(TreeNode* root, int& diameter) {
+    int dfs(TreeNode* root, int& dia) {
         if(!root) {
             return 0;
         }
-        int left = height(root->left, diameter);
-        int right = height(root->right, diameter);
-
-        diameter = max(diameter, 1 + left + right);
-
+        int left = dfs(root->left, dia);
+        int right = dfs(root->right, dia);
+        dia = max(dia, left + right);
         return 1 + max(left, right);
     }
 };
