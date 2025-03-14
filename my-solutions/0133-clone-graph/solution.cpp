@@ -20,28 +20,22 @@ public:
 */
 
 class Solution {
-    unordered_map<Node*, Node*> visited;
 public:
-    Node* clone(Node* node) {
-        if(visited.find(node) != visited.end()) {
-            return visited[node];
-        } else {
-            // clone the node
-            Node* cpy = new Node(node->val);
-            visited[node] = cpy;
-
-            // insert all neighbors to the cpy node's list of neighbors
-            for(int i = 0; i < size(node->neighbors); i++) {
-                cpy->neighbors.push_back(clone(node->neighbors[i]));
-            }
-            return cpy;
-        }
-    }
     Node* cloneGraph(Node* node) {
-        if(!node)
-            return nullptr;
-        else {
-            return clone(node);
+        if(!node) return nullptr;
+        unordered_map<Node*, Node*> nodeMap;
+        dfs(node, nodeMap);
+        return nodeMap[node];
+    }
+    void dfs(Node* node, unordered_map<Node*, Node*>& nodeMap) {
+        if(!node || nodeMap.count(node)) return;
+
+        Node* clonedNode = new Node(node->val);
+        nodeMap[node] = clonedNode;
+        
+        for(auto& n: node->neighbors) {
+            if(!nodeMap.count(n)) dfs(n, nodeMap);
+            clonedNode->neighbors.push_back(nodeMap[n]);
         }
     }
 };
