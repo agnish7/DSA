@@ -1,55 +1,38 @@
 class Trie {
-    class Node {
-        public:
-        char val;
-        Node* next[26];
-        bool isWord;
-        Node(char c) {
-            this->val = c;
-            this->isWord = false;
-            for(int i = 0; i < 26; i++) {
-                this->next[i] = nullptr;
-            }
-        }
-    };
-    Node* getNode(string word) {
-        Node* curr = this->root;
-        for(int i = 0; i < word.length(); i++) {
-            if(curr->next[word[i] - 'a'] == nullptr) {
-                return nullptr;
-            }
-            // cout << curr->next[word[i] - 'a']->val << " " << word[i] << endl;
-            curr = curr->next[word[i] - 'a'];
-        }
-        return curr;
-    }
-    Node* root;
+    struct Node {
+        Node* c[26] = {nullptr}; // Fixed-size array for children
+        bool e = false;          // End-of-word flag
+    } root;  
 public:
     Trie() {
-        this->root = new Node('\0');
+     
     }
     
-    void insert(string word) {
-        Node* curr = this->root;
-        for(int i = 0; i < word.length(); i++) {
-            int idx = word[i] - 'a';
-            if(curr->next[idx] == nullptr) {
-                curr->next[word[i] - 'a'] = new Node(word[i]);
-            }
-            curr = curr->next[idx];
+    void insert(string w) {
+        Node* n = &root;
+        for (char ch : w) {
+            if (!n->c[ch - 'a']) n->c[ch - 'a'] = new Node();
+            n = n->c[ch - 'a'];
         }
-        curr->isWord = true;
+        n->e = true;
     }
     
-    bool search(string word) {
-        Node* res = getNode(word);
-        // cout << res->val << res->isWord << endl;
-        return res != nullptr && res->isWord;
+    bool search(string w) const {
+        const Node* n = &root;
+        for (char ch : w) {
+            if (!n->c[ch - 'a']) return false;
+            n = n->c[ch - 'a'];
+        }
+        return n->e;
     }
     
-    bool startsWith(string prefix) {
-        Node* res = getNode(prefix);
-        return res != nullptr;
+    bool startsWith(string p) const {
+        const Node* n = &root;
+        for (char ch : p) {
+            if (!n->c[ch - 'a']) return false;
+            n = n->c[ch - 'a'];
+        }
+        return true;
     }
 };
 
