@@ -1,58 +1,40 @@
 class Solution {
     struct Node {
-        bool end;
-        Node* next[26];
-        Node() {
-            end = false;
-            for(int i = 0; i < 26; ++i) {
-                this->next[i] = nullptr;
-            }
-        }
-    };
-    Node root;
-    unordered_map<int, bool> cache;
+        Node* next[26] = {nullptr};
+        bool e = false;
+    } root;
 public:
-    void addWord(string word) {
-        Node* curr = &this->root;
-        for(auto& c: word) {
-            if(!curr->next[int(c) - int('a')]) {
-                curr->next[int(c) - int('a')] = new Node();
-            }
-            curr = curr->next[int(c) - int('a')];
+    void insert(string s) {
+        Node* node = &root;
+        for(auto& c: s) {
+            int idx = c - 'a';
+            if(!node->next[idx]) node->next[idx] = new Node();
+            node = node->next[idx];
         }
-        curr->end = true;
+        node->e = true;
     }
-bool wordBreak(string s, vector<string>& wordDict) {
-        int n = s.length();
-        // Build trie
-        for(auto& word: wordDict) {
-            addWord(word);
+
+    bool search(int i, int j, string& s) {
+        if(j >= s.size()) return false;
+        Node* node = &root;
+        for(int e = i; e <= j; ++e) {
+            int idx = s[e] - 'a';
+            if(!node->next[idx]) return false;
+            node = node->next[idx];
         }
-        
-        // dp[i] means if s[0:i] can be segmented into words
-        vector<bool> dp(n + 1, false);
-        dp[0] = true;  // Empty string is always valid
-        
-        // For each position in string
-        for(int i = 0; i < n; i++) {
-            // Only proceed if we can form a valid word sequence up to i
-            if(!dp[i]) continue;
-            
-            // Try to match words starting at position i using trie
-            Node* curr = &root;
-            for(int j = i; j < n; j++) {
-                // If no path exists in trie, break
-                if(!curr->next[s[j] - 'a']) break;
-                
-                curr = curr->next[s[j] - 'a'];
-                // If we found a word, mark dp[j+1] as true
-                if(curr->end) {
-                    dp[j + 1] = true;
-                }
+        return node->e;
+    }
+    bool wordBreak(string s, vector<string>& wordDict) {
+        for(auto& word: wordDict) {
+            insert(word);
+        }
+        vector<bool> res(s.size() + 1, false);
+        res[s.size()] = true;
+        for(int i = s.size() - 1; i > -1; --i) {
+            for(int j = i; j < s.size(); ++j) {
+                res[i] = res[i] || (search(i, j, s) && res[j+1]);
             }
         }
-        
-        return dp[n];
+        return res[0];
     }
 };
-
