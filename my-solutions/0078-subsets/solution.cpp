@@ -2,17 +2,15 @@ class Solution {
 public:
     vector<vector<int>> subsets(vector<int>& nums) {
         vector<vector<int>> res{{}};
-        dfs(nums, 0, res);
-        return res;
-    }
-    void dfs(vector<int>& nums, int i, vector<vector<int>>& res) {
-        if(i == nums.size()) return;
-        int size = res.size();
-        for(int idx = 0; idx < size; ++idx) {
-            vector<int> s = res[idx];
-            s.push_back(nums[i]);
-            res.push_back(s);
+        for(auto& num: nums) {
+            vector<vector<int>> newSets;
+            for(auto& r: res) {
+                vector<int> newSet(r.begin(), r.end());
+                newSet.push_back(num);
+                newSets.push_back(newSet);
+            }
+            res.insert(res.end(), newSets.begin(), newSets.end());
         }
-        dfs(nums, i + 1, res);
+        return res;
     }
 };
