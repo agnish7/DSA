@@ -1,43 +1,29 @@
 class Solution {
+    int cache[201][201] = {0};
+    int dirs[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 public:
     int longestIncreasingPath(vector<vector<int>>& matrix) {
-        int m = matrix.size(), n = matrix[0].size();
-        vector<vector<int>> cache(m, vector<int>(n, 0));
+        const int m = matrix.size(), n = matrix[0].size();
+
         int res = INT_MIN;
         for(int r = 0; r < m; ++r) {
             for(int c = 0; c < n; ++c) {
-                vector<vector<bool>> visited(m, vector<bool>(n, false));
-                res = max(res, dfs(r, c, -1, matrix, visited, cache));
+                res = max(res, dfs(r, c, matrix));
             }
         }
-
-        // for(auto& r: cache) {
-        //     for(auto& e: r) {
-        //         cout << e  << " ";
-        //     }
-        //     cout << endl;
-        // }
         return res;
     }
-    int dfs(int r, int c, int prev, vector<vector<int>>& matrix, vector<vector<bool>>& visited, vector<vector<int>>& cache) {
+    int dfs(int r, int c, vector<vector<int>>& matrix) {
         int m = matrix.size(), n = matrix[0].size();
-        if(r >= m || r < 0 || c >= n || c < 0) return 0;
-        if(prev >= matrix[r][c]) return 0;
         if(cache[r][c]) return cache[r][c];
-        if(visited[r][c]) return 0;
 
-
-        prev = matrix[r][c];
-        int res = INT_MIN;
-        vector<vector<int>> dirs = {{r - 1, c}, {r + 1, c}, {r, c - 1}, {r, c + 1}};
-        for(auto& dir: dirs) {
-            visited[r][c] = true;
-            res = max(res, dfs(dir[0], dir[1], prev, matrix, visited, cache));
-            visited[r][c] = false;
+        int res = 1;
+        for(int i = 0; i < 4; ++i) {
+            int x = r + dirs[i][0], y = c + dirs[i][1];
+            if(x >=0 && x < m && y >=0 && y < n && matrix[r][c] < matrix[x][y])
+            res = max(res, 1 + dfs(x, y, matrix));
         }
 
-        cache[r][c] = res + 1;
-
-        return res + 1;
+        return cache[r][c] = res;
     }
 };
