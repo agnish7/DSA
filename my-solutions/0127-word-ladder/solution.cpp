@@ -1,76 +1,43 @@
 class Solution {
 public:
     int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
-        auto i = find(wordList.begin(), wordList.end(), endWord);
-        if(i == wordList.end()) return 0;
+        // Convert wordList to unordered_set for O(1) lookups
+        unordered_set<string> wordSet(wordList.begin(), wordList.end());
+        if (!wordSet.count(endWord)) return 0;
 
-        int ewIdx = distance(wordList.begin(), i);
-
-        // cout << ewIdx << endl;
-
-        int bwIdx = -1;
-        i = find(wordList.begin(), wordList.end(), beginWord);
-        if(i != wordList.end()) bwIdx = distance(wordList.begin(), i);
-        else {
-            wordList.push_back(beginWord);
-            bwIdx = wordList.size() - 1;
-        }
-
-        // cout << bwIdx << endl;
-
-        unordered_map<int, unordered_set<int>> adjList;
-
-        for(int i = 0; i < wordList.size(); ++i) {
-            for(int j = i + 1; j < wordList.size(); ++j) {
-                if(diff(wordList[i], wordList[j])){
-                    adjList[i].insert(j);
-                    adjList[j].insert(i);
-                }
-            }
-        }
-
-        // for(auto& [k, v]: adjList) {
-        //     cout << k << ": ";
-        //     for(auto& j: v) {
-        //         cout << j << " ";
-        //     }
-        //     cout << endl;
-        // }
-
-        // cout << endl;
-
-
-        queue<int> q;
-        q.push(bwIdx);
-
-        unordered_set<int> visited;
-
+        // Separate visited set to avoid modifying wordSet
+        unordered_set<string> visited;
+        queue<string> q;
+        q.push(beginWord);
         int distance = 1;
 
-        while(!q.empty()) {
-            ++distance;
+        while (!q.empty()) {
             int size = q.size();
-            for(int i = 0; i < size; ++i) {
-                int node = q.front();
-                visited.insert(node);
+            for (int i = 0; i < size; ++i) {
+                string node = q.front();
                 q.pop();
-                // cout << node << ": ";
-                for(auto& neighbour: adjList[node]) {
-                    // cout << neighbour << " ";
-                    if(neighbour == ewIdx) return distance;
-                    if(!visited.count(neighbour)) q.push(neighbour);
+
+                // Early termination if we reach endWord
+                if (node == endWord) return distance;
+
+                // Mark as visited
+                if (visited.count(node)) continue;
+                visited.insert(node);
+
+                // Generate neighbors efficiently
+                for (int j = 0; j < node.size(); ++j) {
+                    string neighbor = node; // Copy once per position
+                    for (char c = 'a'; c <= 'z'; ++c) {
+                        neighbor[j] = c;
+                        if (wordSet.count(neighbor) && !visited.count(neighbor)) {
+                            q.push(neighbor);
+                        }
+                    }
                 }
-                // cout << endl;
             }
+            ++distance;
         }
 
         return 0;
-    }
-    bool diff(string& a, string& b) {
-        int diff = 0;
-        for(int i = 0; i < a.size(); ++i) {
-            if(a[i] != b[i]) ++diff;
-        }
-        return diff == 1; 
     }
 };
