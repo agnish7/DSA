@@ -1,70 +1,68 @@
 class Solution {
+    unordered_map<int, int> areaMap; // island label : area
+    int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 public:
     int largestIsland(vector<vector<int>>& grid) {
-        int n = grid.size();
-        int label = 2;
-        unordered_map<int, int> sizeMap; // Label -> size
-        
-        // Step 1: Label all islands and compute sizes in one pass
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (grid[i][j] == 1) { // Only DFS on unmarked 1s
-                    int size = dfs(grid, i, j, n, label);
-                    sizeMap[label] = size;
-                    ++label;
+        int m = grid.size(), n = grid[0].size();
+        int label = 1;
+        for(int r = 0; r < m; ++r) {
+            for(int c = 0; c < n; ++c) {
+                if(grid[r][c] == 1) {
+                    int area = islandArea(r, c, ++label, grid);
+                    areaMap[label] = area;
                 }
             }
         }
-        
-        // Step 2: Base max size (largest existing island or 0 if none)
-        int maxSize = 0;
-        for (auto& [_, size] : sizeMap) {
-            maxSize = max(maxSize, size);
-        }
-        
-        // Step 3: Try changing each 0 to 1
-        static const int dirs[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (grid[i][j] == 0) {
-                    int seen[4] = {0}; // Track up to 4 unique neighbor labels
-                    int size = 0, seenCount = 0;
-                    for (auto& d : dirs) {
-                        int r = i + d[0];
-                        int c = j + d[1];
-                        if (r >= 0 && r < n && c >= 0 && c < n && grid[r][c] >= 2) {
-                            int islandLabel = grid[r][c];
-                            bool isNew = true;
-                            for (int k = 0; k < seenCount; ++k) {
-                                if (seen[k] == islandLabel) {
-                                    isNew = false;
-                                    break;
-                                }
-                            }
-                            if (isNew) {
-                                size += sizeMap[islandLabel];
-                                seen[seenCount++] = islandLabel;
-                            }
+
+        int maxArea = 0;
+        for(int r = 0; r < m; ++r) {
+            for(int c = 0; c < n; ++c) {
+                if(grid[r][c] == 0) {
+                    unordered_set<int> visited{};
+                    int area = 1;
+                    for(auto& dir: directions) {
+                        int x = r + dir[0];
+                        int y = c + dir[1];
+                        if(x >= 0 && x < m && y >= 0 && y < n && grid[x][y] != 0 && !visited.count(grid[x][y])) {
+                            visited.insert(grid[x][y]);
+                            area += areaMap[grid[x][y]];
                         }
                     }
-                    maxSize = max(maxSize, 1 + size);
+                    maxArea = max(maxArea, area);
                 }
             }
         }
-        
-        // If grid is all 0s or all 1s, handle edge cases
-        return (maxSize == 0 && n > 0) ? 1 : maxSize;
+
+        return maxArea ? maxArea : m * n;
+
+        // for(auto& r: grid) {
+        //     for(auto& e: r) {
+        //         cout << e << " ";
+        //     }
+        //     cout << endl;
+        // }
+
+        // for(auto& [k, v]: areaMap) {
+        //     cout << k << " " << v << endl;
+        // }
+
+        // return -1;
     }
-    
-private:
-    int dfs(vector<vector<int>>& grid, int r, int c, int n, int label) {
-        if (r < 0 || r >= n || c < 0 || c >= n || grid[r][c] != 1) return 0;
-        grid[r][c] = label; // Mark with label
-        static const int dirs[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        int size = 1;
-        for (auto& d : dirs) {
-            size += dfs(grid, r + d[0], c + d[1], n, label);
+
+    // dfs code to find island area and mark with label
+    int islandArea(int r, int c, int label, vector<vector<int>>& grid) {
+        grid[r][c] = label;
+        int m = grid.size(), n = grid[0].size();
+
+        int res = 1;
+        for(auto& dir: directions) {
+            int x = r + dir[0];
+            int y = c + dir[1];
+            if(x >= 0 & x < m && y >= 0 && y < n && grid[x][y] == 1) {
+                res += islandArea(x, y, label, grid);
+            }
         }
-        return size;
+
+        return res;
     }
 };
