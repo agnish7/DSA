@@ -1,38 +1,34 @@
 class Solution {
 public:
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        unordered_map<int, vector<int>> courseMap;
-        unordered_map<int, bool> cache{};
-        for(auto& p: prerequisites) courseMap[p[0]].push_back(p[1]);
-
-        for(auto& [course, prereqs]: courseMap) {
-            if(!check(courseMap, course, {}, cache)) return false;
+        // dfs
+        vector<int> visited(numCourses, 0);
+        unordered_map<int, vector<int>> adj; // pre-req : course
+        for(auto& pre: prerequisites) {
+            adj[pre[1]].push_back(pre[0]);
         }
-
-        return true;
-    }
-    bool check(unordered_map<int, vector<int>>& courseMap, int course, unordered_set<int> visited, unordered_map<int, bool>& cache) {
-        if(visited.count(course)) {
-            cache[course] = false;
-            return false;
-        }
-
-        if(cache.count(course)) return cache[course];
-        if(!courseMap.count(course)) {
-            cache[course] = true;
-            return true;
-        }
-
-        visited.insert(course);
 
         bool res = true;
-        for(auto& p: courseMap[course]) {
-            res = res && check(courseMap, p, visited, cache);
+
+        for(int i = 0; i < numCourses; ++i) {
+            res = res && dfs(i, adj, visited);
         }
 
-        visited.erase(course);
+        return res;
+    }
 
-        cache[course] = res;
+    bool dfs(int course, unordered_map<int, vector<int>>& adj, vector<int>& visited) {
+        visited[course] = 1;
+
+        bool res = true;
+        for(auto& neighbor: adj[course]) {
+            if(visited[neighbor] == 1) return false;
+            if(visited[neighbor] == 0) {
+                res = res && dfs(neighbor, adj, visited);
+            }
+        }
+
+        visited[course] = 2;
         return res;
     }
 };
