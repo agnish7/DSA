@@ -10,58 +10,42 @@
  * };
  */
 class BSTIterator {
-    TreeNode* first;
-    TreeNode* last;
-    TreeNode* curr;
-    TreeNode* root;
+    TreeNode* tail = nullptr;
+    TreeNode* head = nullptr;
+    TreeNode* it = nullptr;
 public:
     BSTIterator(TreeNode* root) {
-        this->root = root;
-        TreeNode* p = root;
-        while(p && p->left) p = p->left;
-        first = p;
-        p = root;
-        while(p && p->right) p = p->right;
-        last = p;
-        curr = new TreeNode(INT_MIN);
+        head = convertToLL(root);
+        TreeNode* p = head;
+        it = head;
+    }
+
+    TreeNode* convertToLL(TreeNode* root) {
+        if(!root) return nullptr;
+
+        TreeNode* ll = convertToLL(root->left);
+        root->left = tail;
+        if(tail) tail->right = root;
+
+        tail = root;
+
+        TreeNode* rl = convertToLL(root->right);
+        root->right = rl;
+        if(rl) rl->left = root;
+
+        return ll ? ll : root;
     }
     
     int next() {
-        if(curr->val == INT_MIN) {
-            curr = first;
-            return curr->val;
-        }
-
-        if(curr == root) {
-            curr = curr->right;
-            while(curr && curr->left) curr = curr->left;
-            return curr->val;
-        }
-
-        if(curr->right) {
-            curr = curr->right;
-            while(curr && curr->left) curr = curr->left;
-        } else {
-            TreeNode* node = root;
-            TreeNode* res = node;
-            int minVal = INT_MAX;
-            while(node && node->left != curr && node->right != curr) {
-
-                if(node->val < curr->val) node = node->right;
-                else node = node->left;
-                if(node->val < minVal && node->val > curr->val) {
-                    minVal = min(minVal, node->val);
-                    res = node;
-                } 
-            }
-            curr = res;
-        }
-
-        return curr->val;
+        if(it) {
+            int val = it->val;
+            it = it->right;
+            return val;
+        } else return -1;
     }
     
     bool hasNext() {
-        return curr != last;
+        return it != nullptr;
     }
 };
 
