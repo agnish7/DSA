@@ -1,42 +1,35 @@
 class Solution {
 public:
     vector<string> addOperators(string num, int target) {
-        vector<string> result;
-        backtrack(num, target, 0, "", 0, 0, result);
-        return result;
+        vector<string> res;
+        backtrack(0, 0, "", 0, num, target, res);
+        return res;
     }
-    
-private:
-    void backtrack(const string& num, int target, int pos, string expr, long value, long last, vector<string>& result) {
-        // Base case: processed all digits
-        if (pos == num.length()) {
-            if (value == target) {
-                result.push_back(expr);
+
+    void backtrack(int i, long val, string expr, long last, string& num, long target, vector<string>& res) {
+        if(i == num.size()) {
+            if(val == target) {
+                res.push_back(expr);
             }
             return;
         }
-        
-        // Try all possible substrings starting at pos
-        long curr = 0;
-        string currStr;
-        for (int i = pos; i < num.length(); ++i) {
-            // Build current number
-            curr = curr * 10 + (num[i] - '0');
-            currStr += num[i];
+
+        string number;
+        long currVal = 0;
+        for(int j = i; j < num.size(); ++j) {
+
+            number += num[j];
+            currVal = currVal * 10 + (num[j] - '0');
+
+            if(num[i] == '0' && j > i) break;
             
-            // Skip if leading zero and length > 1
-            if (currStr.length() > 1 && currStr[0] == '0') break;
-            
-            // First number: no operator
-            if (pos == 0) {
-                backtrack(num, target, i + 1, currStr, curr, curr, result);
+            if(i == 0) {
+                backtrack(j + 1, currVal, number, currVal, num, target, res);
             } else {
-                // Try all operators
-                backtrack(num, target, i + 1, expr + "+" + currStr, value + curr, curr, result);
-                backtrack(num, target, i + 1, expr + "-" + currStr, value - curr, -curr, result);
-                // For *, undo the last addition and apply multiplication
-                backtrack(num, target, i + 1, expr + "*" + currStr, value - last + last * curr, last * curr, result);
+                backtrack(j + 1, val + currVal, expr + '+' + number, currVal, num, target, res);
+                backtrack(j + 1, val - currVal, expr + '-' + number, -currVal, num, target, res);
+                backtrack(j + 1, val - last + last * currVal, expr + '*' + number, last * currVal, num, target, res);
             }
         }
-    }
+    } 
 };
