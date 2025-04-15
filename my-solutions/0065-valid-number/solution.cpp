@@ -1,32 +1,31 @@
 class Solution {
 public:
     bool isNumber(string s) {
-        bool digit = false, sign = false, decimal = false, exponent = false;
+        bool sign = false, decimal = false, exp = false;
+        bool digit = false;
         for(auto& c: s) {
-            if(isalpha(c)) {
-                string symbols = "eE+-";
-                if(find(symbols.begin(), symbols.end(), c) == symbols.end()) return false;
-            }
-            if(isdigit(c)) digit = true;
+            if(isalpha(c) && c != 'e' && c != 'E') return false;
             if(c == '+' || c == '-') {
-                // cout << c << " " << sign << endl;
-                if(sign || digit || (decimal && !exponent)) return false;
+                if(sign || decimal || digit) return false;
                 sign = true;
             }
-            if(c == '.') {
-                // cout << c << " " << decimal << endl;
-                if(decimal || exponent) return false;
+            else if(c == '.') {
+                if(exp || decimal) return false;
                 decimal = true;
-            }
-            if(c == 'e' || c == 'E') {
-                // cout << c << " " << exponent << endl;
-                if(exponent || !digit) return false;
-                exponent = true;
-                sign = false;
+            } else if(c == 'e' || c == 'E') {
+                if(exp || !digit) return false;
                 digit = false;
+                sign = false;
+                decimal = false;
+                exp = true;
+            } else if(isdigit(c)) {
+                digit = true;
             }
         }
+
+        cout << digit << endl;
+
         if(!digit) return false;
-        return true;
+        else return true;
     }
 };
