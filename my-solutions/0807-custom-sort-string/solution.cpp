@@ -1,13 +1,28 @@
 class Solution {
 public:
     string customSortString(string order, string s) {
-        string res = "";
-        vector<int> s_freq(26, 0);
-        vector<int> order_freq(26, 0);
-        for(auto& c: order) ++order_freq[c - 'a'];
-        for(auto& c: s) ++s_freq[c - 'a'];
-        for(auto& c: order) res += string(s_freq[c - 'a'], c);
-        for(auto& c: s)if(!order_freq[c - 'a']) res += c;
+        unordered_set<char> order_set(order.begin(), order.end());
+        for(auto& c: s) {
+            if(!order_set.count(c)) {
+                order.push_back(c);
+                order_set.insert(c);
+            }
+        }
+
+        unordered_map<char, int> letter_to_count;
+
+        for(auto& c: s) {
+            ++letter_to_count[c];
+        }
+
+        string res{};
+
+        for(auto& c: order) {
+            if(letter_to_count.count(c)) {
+                res += string(letter_to_count[c], c);
+            }
+        }
+
         return res;
     }
 };
