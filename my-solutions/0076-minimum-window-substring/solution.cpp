@@ -1,42 +1,35 @@
 class Solution {
 public:
     string minWindow(string s, string t) {
-        if (s.empty() || t.empty()) return "";
-
-        unordered_map<char, int> tMap, sMap;
-        int required = 0, matches = 0;
-        int minLen = INT_MAX, minStart = 0;
-
-        // Build tMap and count unique characters needed
-        for (char c : t) {
-            if (tMap[c] == 0) required++; // New unique character
-            tMap[c]++;
+        int matches = 0;
+        int window[128] = {0}, tMap[128] = {0}; // Use 128 for ASCII characters
+        int l = 0, r = s.size();
+        int needed = 0;
+        for (auto& c : t) {
+            if (!tMap[c]) ++needed; // Use c directly, no toupper
+            ++tMap[c];
         }
-
         int j = 0;
-        for (int i = 0; i < s.size(); i++) {
-            // Expand window
-            char right = s[i];
-            sMap[right]++;
-            if (tMap.count(right) && sMap[right] == tMap[right]) {
-                matches++;
-            }
 
-            // Shrink window as much as possible
-            while (matches == required) {
-                if (i - j + 1 < minLen) {
-                    minLen = i - j + 1;
-                    minStart = j;
+        for (int i = 0; i < s.size(); ++i) {
+            int idx = s[i]; // Use s[i] directly, no toupper
+            ++window[idx];
+            if (window[idx] == tMap[idx]) ++matches;
+
+            if (matches == needed) {
+                while (matches == needed) {
+                    if (i - j < r - l) {
+                        r = i;
+                        l = j;
+                    }
+                    int idx = s[j]; // Use s[j] directly, no toupper
+                    ++j;
+                    --window[idx];
+                    if (window[idx] == tMap[idx] - 1) --matches;
                 }
-                char left = s[j];
-                sMap[left]--;
-                if (tMap.count(left) && sMap[left] < tMap[left]) {
-                    matches--;
-                }
-                j++;
             }
         }
 
-        return minLen == INT_MAX ? "" : s.substr(minStart, minLen);
+        return r == s.size() ? "" : s.substr(l, (r - l + 1));
     }
 };
