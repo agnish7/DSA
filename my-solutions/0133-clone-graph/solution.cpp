@@ -23,19 +23,18 @@ class Solution {
 public:
     Node* cloneGraph(Node* node) {
         if(!node) return nullptr;
-        unordered_map<Node*, Node*> nodeMap;
-        dfs(node, nodeMap);
-        return nodeMap[node];
+        unordered_map<Node*, Node*> nodemap{{node, new Node(node->val)}};
+        dfs(node, nodemap);
+        return nodemap[node];
     }
-    void dfs(Node* node, unordered_map<Node*, Node*>& nodeMap) {
-        if(!node || nodeMap.count(node)) return;
 
-        Node* clonedNode = new Node(node->val);
-        nodeMap[node] = clonedNode;
-        
+    void dfs(Node* node, unordered_map<Node*, Node*>& nodemap) {
         for(auto& n: node->neighbors) {
-            if(!nodeMap.count(n)) dfs(n, nodeMap);
-            clonedNode->neighbors.push_back(nodeMap[n]);
+            if(nodemap.find(n) == nodemap.end()) {
+                nodemap[n] = new Node(n->val);
+                dfs(n, nodemap);
+            }
+            nodemap[node]->neighbors.push_back(nodemap[n]);
         }
     }
 };
