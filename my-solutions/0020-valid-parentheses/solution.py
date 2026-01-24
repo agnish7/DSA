@@ -1,17 +1,17 @@
 class Solution:
     def isValid(self, s: str) -> bool:
+        stack = deque()
 
-        bracketStack = deque()
         for c in s:
-            if len(bracketStack) == 0 and c in [')', '}', ']']:
+            if c in "({[":
+                stack.append(c)
+                continue
+            elif not stack:
                 return False
-            if len(bracketStack) > 0 and c in [')', '}', ']']:
-                top = bracketStack[-1]
-                if top == '(' and c != ')' or top == '{' and c != '}' or top == '[' and c != ']':
-                    return False
-                else:
-                    bracketStack.pop()
-            else:
-                bracketStack.append(c)
-        
-        return len(bracketStack) == 0
+            elif stack[-1] == '(' and c != ')' or \
+            stack[-1] == '{' and c != '}' or \
+            stack[-1] == '[' and c != ']':
+                return False
+            stack.pop()
+            
+        return not stack
