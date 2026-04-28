@@ -4,21 +4,35 @@
 #         self.val = val
 #         self.left = left
 #         self.right = right
+
 class Solution:
     def goodNodes(self, root: TreeNode) -> int:
 
-        res = 0
-        
-        def dfs(node, maxSoFar):
-            nonlocal res
+        good_nodes = 0
+
+        # prev_nodes, root, root.left, root right
+
+
+        def traverse(max_node_val, node):
             if not node:
                 return
-            if node.val >= maxSoFar:
-                res += 1
-            maxSoFar = max(node.val, maxSoFar)
-            dfs(node.right, maxSoFar)
-            dfs(node.left, maxSoFar)
+            nonlocal good_nodes
 
-        dfs(root, float('-inf'))
+            # print(node.val, end = ": ")
+            # for n in prev_nodes:
+            #     print(n.val, end = " ")
+            # print("")
 
-        return res
+            if max_node_val <= node.val:
+                good_nodes += 1
+
+            max_node_val = max(node.val, max_node_val)
+            tmp = max_node_val
+            traverse(max_node_val, node.left)
+            traverse(tmp, node.right)
+            max_node_val = tmp
+
+        traverse(float('-inf'), root)
+
+        return good_nodes
+            
