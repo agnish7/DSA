@@ -1,23 +1,22 @@
 class Solution:
     def permute(self, nums: List[int]) -> List[List[int]]:
-        if nums == None:
-            return [[]]
-        elif len(nums) == 0:
-            return [[]]
-
+        candidates = set(nums)
+        stack = []
+        n = len(nums)
         res = []
-        for i in range(len(nums)):
-            nums[i]
-            temp = nums[:i]
-            temp2 = nums[i+1:]
-            temp.extend(temp2)
 
-            permutations = self.permute(temp)
-            
-            for j in range(len(permutations)):
-                temp = [nums[i]]
-                temp.extend(permutations[j])
-                res.append(temp)
+        def dfs():
+            if len(stack) == n:
+                res.append(stack.copy())
+                return
+            else:
+                for candidate in list(candidates):
+                    stack.append(candidate)
+                    candidates.remove(candidate)
+                    dfs()
+                    candidates.add(candidate)
+                    stack.pop()
+        
+        dfs()
 
-        return res
-
+        return res    
