@@ -1,17 +1,33 @@
 class Solution:
     def generateParenthesis(self, n: int) -> List[str]:
-        stack = deque()
+
         res = []
-        def backTrack(open, close):
-            if open == n and close == open:
+        stack = []
+
+        def dfs(opn, cls):
+            
+            if opn == n and cls == n:
                 res.append("".join(stack))
-            if open < n:
-                stack.append('(')
-                backTrack(open + 1, close)
-                stack.pop()
-            if close < open:
-                stack.append(')')
-                backTrack(open, close + 1)
-                stack.pop()
-        backTrack(0, 0)
+            elif opn > n:
+                return
+            else:
+                if cls > opn:
+                    return
+                elif cls == opn:
+                    stack.append('(')
+                    dfs(opn + 1, cls)
+                    stack.pop()
+                    return
+                else: # cls < opn
+                    stack.append('(') # add opn bracket
+                    dfs(opn + 1, cls)
+                    stack.pop()
+                    
+                    stack.append(')') # add cls bracket
+                    dfs(opn, cls + 1)
+                    stack.pop()
+
+        dfs(0, 0)
+
         return res
+
