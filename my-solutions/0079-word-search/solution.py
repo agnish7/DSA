@@ -1,44 +1,42 @@
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
-        visited = set()
-        def search(r, c, word):
-            if (
-                r < 0 or
-                c < 0 or
-                r > len(board) - 1 or
-                c > len(board[0]) - 1 or
-                word[0] != board[r][c] or
-                (r, c) in visited
-            ):
-                # print(False, word, [r, c])
-                return False
-            elif len(word) == 1 and word[0] == board[r][c]:
-                # print(True, word, [r, c])
+
+        m, n = len(board), len(board[0])
+        end = len(word)
+        visited = [[False] * n for _ in range(m)]
+
+        def dfs(i, r, c):
+            if i == end:
                 return True
+
+            if r == -1 or c == -1 or r == m or c == n:
+                return False
+            
+            if visited[r][c]:
+                return False
+
+            visited[r][c] = True
+            
+            if board[r][c] == word[i]:
+                tmp = \
+                dfs(i + 1, r + 1, c) or \
+                dfs(i + 1, r - 1, c) or \
+                dfs(i + 1, r, c + 1) or \
+                dfs(i + 1, r, c - 1)
+                visited[r][c] = False
+                return tmp
             else:
-                # print("searching", word, [r, c])
-                visited.add((r, c))
-                res = (
-                    search(r-1, c, word[1:]) or
-                    search(r+1, c, word[1:]) or
-                    search(r, c+1, word[1:]) or 
-                    search(r, c-1, word[1:])
-                )
-                visited.remove((r, c))
-                return res
+                visited[r][c] = False
+                return False
+            
 
-        # for i in range(len(board)):
-        #     for j in range(len(board[0])):
-        #         visited = set()
-        #         if search(i,j, word, [i, j]):
-        #             return True
-        count = defaultdict(int, sum(map(Counter, board), Counter()))
-        if count[word[0]] > count[word[-1]]:
-            word = word[::-1]
-        for i in range(len(board)):
-            for j in range(len(board[0])):
-                if search(i, j, word):
-                    return True
+        res = False
 
-        return False
+        for r in range(m):
+            for c in range(n):
+                # print(dfs(0, r, c))
+                tmp = dfs(0, r, c)
+                res = res or tmp
 
+        return res
+        
