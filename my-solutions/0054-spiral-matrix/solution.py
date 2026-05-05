@@ -1,71 +1,33 @@
 class Solution:
     def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        m, n = len(matrix), len(matrix[0])
+        u, d = 0, m - 1
+        l, r = 0, n - 1
+        
         res = []
         
-        i, j = 0, 0
-        m, n = len(matrix), len(matrix[0])
-        printed = 0
-        
-        dir = 'right'
-        hor = n
-        ver = m-1
-        while(printed < m * n):
-            
-            if(dir == 'right'):
-                for idx in range(hor):
-                    res.append(matrix[i][j])
-                    j += 1
-                    printed += 1
-                    
-                if(printed >= m*n):
-                    return res
-                
-                j -= 1
-                i += 1
-                hor -= 1
-                dir = 'down'
-                
-            if(dir == 'down'):
-                for idx in range(ver):
-                    res.append(matrix[i][j])
-                    i += 1
-                    printed += 1
-                
-                if(printed >= m*n):
-                    return res
-                    
-                i -= 1
-                j -= 1
-                ver -= 1
-                dir = 'left'
+        while (u <= d and l <= r):
 
-            if(dir == 'left'):
-                for idx in range(hor):
-                    res.append(matrix[i][j])
-                    j -= 1
-                    printed += 1
-                
-                if(printed >= m*n):
-                    return res
-                    
-                j += 1
-                i -= 1
-                hor -= 1
-                dir = 'up'
-                
-            if(dir == 'up'):
-                for idx in range(ver):
-                    res.append(matrix[i][j])
-                    i -= 1
-                    printed += 1
-                
-                if(printed >= m*n):
-                    return res
+            for i in range(l, r + 1):
+                res.append(matrix[u][i])
 
-                i += 1
-                j += 1
-                ver -= 1
-                dir = 'right'
+            u += 1
 
+            for i in range(u, d + 1):
+                res.append(matrix[i][r])
+
+            r -= 1
+
+            if u <= d:
+                for i in range(r, l - 1, -1):
+                    res.append(matrix[d][i])
+
+                d -= 1            
+
+            if l <= r:
+                for i in range(d, u - 1, -1):
+                    res.append(matrix[i][l])
+
+                l += 1
 
         return res
